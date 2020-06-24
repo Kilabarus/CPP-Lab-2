@@ -1,15 +1,15 @@
 #include <string>
-#include "DateAndTime.h"
+#include "DateTime.h"
 
 #pragma once
 
-const double WEIGHT_EPSILON = 0.001;
+static constexpr double WEIGHT_EPSILON = 0.001;
 
 class Baggage
 {
 public:
 	int flightNumber;
-	DateAndTime flightDateAndTime;
+	DateTime flightDateTime;
 
 	std::string destination;
 	std::string passangerLastName;
@@ -17,24 +17,9 @@ public:
 	int placeForBaggage;
 	double baggageWeight;
 
-	Baggage()
-	{
-		flightNumber = -1;
-		destination = "";
-		passangerLastName = "";
-		placeForBaggage = -1;
-		baggageWeight = -1.;
-	};
+	Baggage();
 
-	Baggage(int flNum, DateAndTime flDateAndTime, std::string dest, std::string passLastName, int plForBaggage, double baggWeight)
-	{
-		flightNumber = flNum;
-		flightDateAndTime = flDateAndTime;
-		destination = dest;
-		passangerLastName = passLastName;
-		placeForBaggage = plForBaggage;
-		baggageWeight = baggWeight;
-	}
+	Baggage(int flNum, DateTime flDateAndTime, std::string dest, std::string passLastName, int plForBaggage, double baggWeight);
 
 	Baggage& operator= (const Baggage& baggage)
 	{
@@ -42,7 +27,7 @@ public:
 			return *this;
 
 		flightNumber = baggage.flightNumber;
-		flightDateAndTime = baggage.flightDateAndTime;
+		flightDateTime = baggage.flightDateTime;
 		destination = baggage.destination;
 		passangerLastName = baggage.passangerLastName;
 		placeForBaggage = baggage.placeForBaggage;

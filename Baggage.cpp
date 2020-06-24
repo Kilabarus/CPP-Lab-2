@@ -1,15 +1,34 @@
-#include <string>
 #include "Baggage.h"
-#include "SupportiveFunctions.h"
+#include "HelpUtils.h"
+
+Baggage::Baggage()
+{
+	flightNumber = -1;
+	destination = "";
+	passangerLastName = "";
+	placeForBaggage = -1;
+	baggageWeight = -1.;
+}
+
+Baggage::Baggage(int fNumber, DateTime fDateTime, std::string dest, std::string pLastName, int pForBaggage, double bWeight)
+{
+	flightNumber = fNumber;
+	flightDateTime = fDateTime;
+	destination = dest;
+	passangerLastName = pLastName;
+	placeForBaggage = pForBaggage;
+	baggageWeight = bWeight;
+}
 
 bool operator== (const Baggage& left, const Baggage& right)
 {
-	return (left.passangerLastName == right.passangerLastName &&
-			left.flightNumber == right.flightNumber &&
-			left.destination == right.destination &&
-			left.flightDateAndTime == right.flightDateAndTime &&
-			left.placeForBaggage == right.placeForBaggage &&
-			abs(left.baggageWeight - right.baggageWeight) < WEIGHT_EPSILON);
+	return
+		left.flightNumber == right.flightNumber &&
+		left.flightDateTime == right.flightDateTime &&
+		left.destination == right.destination &&
+		left.passangerLastName == right.passangerLastName &&
+		left.placeForBaggage == right.placeForBaggage &&
+		abs(left.baggageWeight - right.baggageWeight) < WEIGHT_EPSILON;
 }
 
 bool operator!= (const Baggage& left, const Baggage& right)
@@ -24,7 +43,7 @@ std::ostream& operator<< (std::ostream& out, const Baggage& baggage)
 		out << "Фамилия владельца: " << baggage.passangerLastName << std::endl
 			<< "Номер рейса: " << baggage.flightNumber << std::endl
 			<< "Пункт назначения: " << baggage.destination << std::endl
-			<< "Дата и время вылета: " << baggage.flightDateAndTime << std::endl
+			<< "Дата и время вылета: " << baggage.flightDateTime << std::endl
 			<< "Количество мест багажа: " << baggage.placeForBaggage << std::endl
 			<< "Вес багажа: " << baggage.baggageWeight << std::endl;
 	}
@@ -33,7 +52,7 @@ std::ostream& operator<< (std::ostream& out, const Baggage& baggage)
 		out << baggage.flightNumber << std::endl
 			<< baggage.passangerLastName << std::endl
 			<< baggage.destination << std::endl
-			<< baggage.flightDateAndTime.day << " " << baggage.flightDateAndTime.month << " " << baggage.flightDateAndTime.year << " " << baggage.flightDateAndTime.hour << " " << baggage.flightDateAndTime.minute << std::endl
+			<< baggage.flightDateTime << std::endl
 			<< baggage.placeForBaggage << std::endl
 			<< baggage.baggageWeight;
 	}
@@ -44,27 +63,13 @@ std::ostream& operator<< (std::ostream& out, const Baggage& baggage)
 std::istream& operator>> (std::istream& in, Baggage& baggage)
 {
 	if (&in == &std::cin)
-	{
-		std::cout << "Введите фамилию владельца багажа: ";
-		in >> baggage.passangerLastName;
-		std::cout << "Введите номер рейса: ";
-		in >> baggage.flightNumber;
-		std::cout << "Введите пункт назначения: ";
-		in >> baggage.destination;
-		std::cout << "Введите год: ";
-		in >> baggage.flightDateAndTime.year;
-		std::cout << "Введите номер месяца: ";
-		in >> baggage.flightDateAndTime.month;
-		std::cout << "Введите день: ";
-		in >> baggage.flightDateAndTime.day;
-		std::cout << "Введите час: ";
-		in >> baggage.flightDateAndTime.hour;
-		std::cout << "Введите минуту: ";
-		in >> baggage.flightDateAndTime.minute;
-		std::cout << "Введите количество мест багажа: ";
-		in >> baggage.placeForBaggage;
-		std::cout << "Введите вес багажа: ";
-		in >> baggage.baggageWeight;
+	{		
+		baggage.passangerLastName = InputString("Введите фамилию владельца багажа: ");
+		baggage.flightNumber = InputUnsigned("Введите номер рейса: ", 1, 9999);
+		baggage.destination = InputString("Введите пункт назначения: ");
+		in >> baggage.flightDateTime;
+		baggage.placeForBaggage = InputUnsigned("Введите количество мест багажа: ", 1, 10);
+		baggage.baggageWeight = InputDouble("Введите вес багажа: ", 1, 20);		
 	}
 	else
 	{
@@ -73,21 +78,15 @@ std::istream& operator>> (std::istream& in, Baggage& baggage)
 
 		in.ignore();
 		in.getline(buf, 50);
-		baggage.passangerLastName = CharArrayToString(buf);
-		
-		in.getline(buf, 50);
-		baggage.destination = CharArrayToString(buf);
+		baggage.passangerLastName = std::string(buf);
 
-		in >> baggage.flightDateAndTime.day;
-		in >> baggage.flightDateAndTime.month;
-		in >> baggage.flightDateAndTime.year;
-		in >> baggage.flightDateAndTime.hour;
-		in >> baggage.flightDateAndTime.minute;
+		in.getline(buf, 50);
+		baggage.destination = std::string(buf);
+
+		in >> baggage.flightDateTime;
 		in >> baggage.placeForBaggage;
 		in >> baggage.baggageWeight;
-
-		in.ignore();
 	}
-	
+
 	return in;
 }
